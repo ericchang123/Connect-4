@@ -7,6 +7,9 @@ class ConnectFour(tk.Tk):
         self.canvas.pack(side="top", fill="both", expand="true")
         self.cellwidth = 70
         self.cellheight = 70
+        self.clicked = False
+        self.bind("<Motion>", self.on_hover)
+        self.bind("<Button-1>", self.on_click)
 
         self.rect = {}
         self.oval = {}
@@ -18,6 +21,15 @@ class ConnectFour(tk.Tk):
                 y2 = y1 + self.cellheight
                 self.rect[row, col] = self.canvas.create_rectangle(x1, y1, x2, y2, fill = "blue", tags = "rect", outline = "")
                 self.oval[row, col] = self.canvas.create_oval(x1+5, y1+5, x2-5, y2-5, fill = "seashell3", tags = "oval")
+
+    def on_hover(self, event):
+        if not self.clicked:
+            print(event.x, event.y)
+
+    def on_click(self, event):
+        self.clicked = True
+        print("Clicked: {},{}".format(event.x, event.y))
+        #print(event.x, event.y)
 
 if __name__ == "__main__":
     game = ConnectFour()
