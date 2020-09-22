@@ -27,6 +27,14 @@ class ConnectFour(tk.Tk):
             print(event.x, event.y)
 
     def on_click(self, event):
+        x = event.x
+        y = event.y
+        item = self.canvas.find_closest(x, y)
+        #type = self.canvas.type(item)
+        tag = self.canvas.itemcget(item, "tags")
+        if "oval" in tag:
+            print("Found oval")
+            self.canvas.itemconfig(item, fill = "yellow")
         self.clicked = True
         print("Clicked: {},{}".format(event.x, event.y))
         #print(event.x, event.y)
