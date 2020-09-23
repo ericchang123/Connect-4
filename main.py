@@ -63,42 +63,68 @@ class ConnectFour(tk.Tk):
     def check_sequence(self, col, row, dir, len):
         color = self.mapped[row][col]
         print("Color: {}".format(color))
-        n = ne = e = se = s = sw = w = nw = 0
+        NE = E = SE = S = SW = W = NW = 0
         # nw n ne
         #  w c e
         # sw s se
 
-        # C0
-        if (row > 0) and self.mapped[row - 1][col] == color:
-            pass
+        # NE
+        r = row; c = col;
+        while (c < 6 and r > 0) and (self.mapped[r - 1][c + 1] == color):
+            NE += 1
+            #print("NE: {}".format(NE))
+            r -= 1; c += 1;
 
-        # C1
-        if col < 6 and row > 0:
-            pass
+        # E
+        r = row; c = col;
+        while (c < 6) and (self.mapped[r][c + 1] == color):
+            E += 1
+            c += 1
+            #print("E")
 
-        # C2
-        if col < 6:
-            pass
+        # SE
+        r = row; c = col;
+        while (r < 6 and c < 6) and (self.mapped[r + 1][c + 1] == color):
+            #print("SE")
+            SE += 1
+            r += 1; c += 1;
 
-        # C3
-        if row < 6 and col < 6:
-            pass
+        # S
+        r = row; c = col;
+        while (r < 6) and (self.mapped[r + 1][c] == color):
+            S += 1
+            r += 1
+            #print("S")
 
-        # Case 4
-        if row < 6:
-            pass
+        # SW
+        r = row; c = col;
+        while (c > 0 and r < 6) and (self.mapped[r + 1][c - 1] == color):
+            SW += 1
+            r += 1; c -= 1
+            #print("SW")
 
-        # Case 5
-        if col > 0 and row < 6:
-            pass
+        # W
+        r = row; c = col;
+        if (c > 0) and (self.mapped[r][c - 1] == color):
+            W += 1
+            c -= 1
+            #print ("W")
 
-        # Case 6
-        if col > 0:
-            pass
+        # NW
+        r = row; c = col;
+        if (c > 0 and r > 0) and (self.mapped[r - 1][c - 1] == color):
+            NW += 1
+            r -= 1; c -= 1;
+            #print("NW")
 
-        # Case 7
-        if col > 0 and row > 0:
-            pass
+        if S + 1 >= 4:
+            print("WINNER")
+        elif W + 1 + E >= 4:
+            print("WINNER")
+        elif NE + 1 + SW >= 4:
+            print("WINNER")
+        elif NW + 1 + SE >= 4:
+            print("WINNER")
 
     def on_click(self, event):
         # For now increment counter. We are assuming clicking is means you played your turn
@@ -119,8 +145,8 @@ class ConnectFour(tk.Tk):
                 self.mapped[row][col] = "y" if color == "yellow" else "r"
                 self.canvas.itemconfig(item, fill = color)
             self.filledCircles[index] -= 1
-            if self.numTurns >= 7:
-                self.check_sequence(col, row, -1, 0)
+            #if self.numTurns >= 7:
+            self.check_sequence(col, row, -1, 0)
 
         #self.clicked = True
         print(numpy.matrix(self.mapped))
