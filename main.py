@@ -1,5 +1,6 @@
 import Tkinter as tk
 import random
+import numpy
 
 class ConnectFour(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -12,8 +13,11 @@ class ConnectFour(tk.Tk):
         self.columnRanges = [(0, 70), (70, 140), (140, 210), (210, 280), (280, 350), (350, 420), (420, 490)]
         self.filledCircles = [6, 6, 6, 6, 6, 6, 6]
         self.startingColor = random.randint(0,1)
+        #self.previousCol = [-1, -1, -1]
         self.bind("<Motion>", self.on_hover)
         self.bind("<Button-1>", self.on_click)
+
+        self.mapped = [["g" for x in range(7)] for y in range(7)]
 
         self.rect = {}
         self.oval = {}
@@ -35,25 +39,46 @@ class ConnectFour(tk.Tk):
         return i
 
     def on_hover(self, event):
-        if not self.clicked:
-            print(event.x, event.y)
-
-    def on_click(self, event):
+        pass
+        #print("Hovering: {},{}".format(event.x, event.y))
+        """
         x = event.x
-        y = event.y
         index = self.get_column(x)
-        print("Index: {}".format(index))
         if self.filledCircles[index] > -1:
             centerX = index * self.cellwidth + 35
             centerY = self.filledCircles[index] * self.cellheight + 35
             item = self.canvas.find_closest(centerX, centerY)
+            if "oval" in self.canvas.itemcget(item, "tags") and index != previousCol[0]:
+                if previousCol[0] != -1:
+                    prevX = previousCol[0] * self.cellwidth + 35
+                    prevY = self.filledCircles[previousCol[0]] * self.cellheight + 35
+                    prevItem = self.canvas.find_closest(prevX, prevY)
+                    self.canvas.itemconfig(prevItem, fill = "seashell3")
+                color = "yellow" if self.startingColor else "red"
+                self.canvas.itemconfig(item, fill = color)
+            self.filledCircles[index] -= 1
+            """
+
+    def on_click(self, event):
+        index = self.get_column(event.x)
+
+        # Only do something if there are empty slots in given column
+        if self.filledCircles[index] > -1:
+            col = index
+            row = self.filledCircles[index]
+            centerX = col * self.cellwidth + 35
+            centerY = row * self.cellheight + 35
+            print("Clicked col: {}, row: {}".format(col, row))
+            item = self.canvas.find_closest(centerX, centerY)
             if "oval" in self.canvas.itemcget(item, "tags"):
                 color = "yellow" if self.startingColor else "red"
                 self.startingColor = 1 - self.startingColor
+                self.mapped[row][col] = "y" if color == "yellow" else "r"
                 self.canvas.itemconfig(item, fill = color)
             self.filledCircles[index] -= 1
         self.clicked = True
-        print("Clicked: {},{}".format(event.x, event.y))
+        print(numpy.matrix(self.mapped))
+
 
 if __name__ == "__main__":
     game = ConnectFour()
