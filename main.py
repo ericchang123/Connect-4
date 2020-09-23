@@ -13,6 +13,7 @@ class ConnectFour(tk.Tk):
         self.columnRanges = [(0, 70), (70, 140), (140, 210), (210, 280), (280, 350), (350, 420), (420, 490)]
         self.filledCircles = [6, 6, 6, 6, 6, 6, 6]
         self.startingColor = random.randint(0,1)
+        self.numTurns = 0
         #self.previousCol = [-1, -1, -1]
         self.bind("<Motion>", self.on_hover)
         self.bind("<Button-1>", self.on_click)
@@ -59,7 +60,48 @@ class ConnectFour(tk.Tk):
             self.filledCircles[index] -= 1
             """
 
+    def check_sequence(self, col, row, dir, len):
+        color = self.mapped[row][col]
+        print("Color: {}".format(color))
+        # 7 0 1
+        # 6 c 2
+        # 5 4 3
+
+        # Case 0
+        if row > 0:
+            pass
+
+        # Case 1
+        if col < 6 and row > 0:
+            pass
+
+        # Case 2
+        if col < 6:
+            pass
+
+        # Case 3
+        if row < 6 and col < 6:
+            pass
+
+        # Case 4
+        if row < 6:
+            pass
+
+        # Case 5
+        if col > 0 and row < 6:
+            pass
+
+        # Case 6
+        if col > 0:
+            pass
+
+        # Case 7
+        if col > 0 and row > 0:
+            pass
+
     def on_click(self, event):
+        # For now increment counter. We are assuming clicking is means you played your turn
+        self.numTurns += 1
         index = self.get_column(event.x)
 
         # Only do something if there are empty slots in given column
@@ -76,7 +118,10 @@ class ConnectFour(tk.Tk):
                 self.mapped[row][col] = "y" if color == "yellow" else "r"
                 self.canvas.itemconfig(item, fill = color)
             self.filledCircles[index] -= 1
-        self.clicked = True
+            if self.numTurns >= 7:
+                self.check_sequence(col, row, -1, 0)
+
+        #self.clicked = True
         print(numpy.matrix(self.mapped))
 
 
