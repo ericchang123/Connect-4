@@ -63,23 +63,24 @@ class ConnectFour(tk.Tk):
     def check_sequence(self, col, row, dir, len):
         color = self.mapped[row][col]
         print("Color: {}".format(color))
-        # 7 0 1
-        # 6 c 2
-        # 5 4 3
+        n = ne = e = se = s = sw = w = nw = 0
+        # nw n ne
+        #  w c e
+        # sw s se
 
-        # Case 0
-        if row > 0:
+        # C0
+        if (row > 0) and self.mapped[row - 1][col] == color:
             pass
 
-        # Case 1
+        # C1
         if col < 6 and row > 0:
             pass
 
-        # Case 2
+        # C2
         if col < 6:
             pass
 
-        # Case 3
+        # C3
         if row < 6 and col < 6:
             pass
 
@@ -127,4 +128,5 @@ class ConnectFour(tk.Tk):
 
 if __name__ == "__main__":
     game = ConnectFour()
+    game.title("Connect4")
     game.mainloop()
