@@ -7,21 +7,28 @@ class ConnectFour(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         self.canvas = tk.Canvas(self, width=490, height=490, borderwidth=0, highlightthickness=0)
         self.canvas.pack(side="top", fill="both", expand="true")
+
         self.cellwidth = 70
         self.cellheight = 70
-        self.clicked = False
+        #self.clicked = False
         self.columnRanges = [(0, 70), (70, 140), (140, 210), (210, 280), (280, 350), (350, 420), (420, 490)]
         self.filledCircles = [6, 6, 6, 6, 6, 6, 6]
+
         self.startingColor = random.randint(0,1)
         self.numTurns = 0
-        #self.previousCol = [-1, -1, -1]
-        self.bind("<Motion>", self.on_hover)
-        self.bind("<Button-1>", self.on_click)
+        self.numWinsRed = 0
+        self.numWinsYellow = 0
 
         self.mapped = [["g" for x in range(7)] for y in range(7)]
-
         self.rect = {}
         self.oval = {}
+
+        #self.bind("<Motion>", self.on_hover)
+        self.bind("<Button-1>", self.on_click)
+
+        self.initialize_board()
+
+    def initialize_board(self):
         for col in range(7):
             for row in range(7):
                 x1 = col * self.cellwidth
@@ -60,13 +67,14 @@ class ConnectFour(tk.Tk):
             self.filledCircles[index] -= 1
             """
 
-    def check_sequence(self, col, row, dir, len):
+    def display_winner(self, color):
+        self.canvas.delete("all")
+        self.canvas.create_text(490 / 2, 490 / 2, text = "test", font = "Herculanum 60 bold")
+
+    def check_sequence(self, col, row):
         color = self.mapped[row][col]
         print("Color: {}".format(color))
         NE = E = SE = S = SW = W = NW = 0
-        # nw n ne
-        #  w c e
-        # sw s se
 
         # NE
         r = row; c = col;
@@ -74,18 +82,19 @@ class ConnectFour(tk.Tk):
             NE += 1
             #print("NE: {}".format(NE))
             r -= 1; c += 1;
+            print("NE")
 
         # E
         r = row; c = col;
         while (c < 6) and (self.mapped[r][c + 1] == color):
             E += 1
             c += 1
-            #print("E")
+            print("E")
 
         # SE
         r = row; c = col;
         while (r < 6 and c < 6) and (self.mapped[r + 1][c + 1] == color):
-            #print("SE")
+            print("SE")
             SE += 1
             r += 1; c += 1;
 
@@ -94,41 +103,45 @@ class ConnectFour(tk.Tk):
         while (r < 6) and (self.mapped[r + 1][c] == color):
             S += 1
             r += 1
-            #print("S")
+            print("S")
 
         # SW
         r = row; c = col;
         while (c > 0 and r < 6) and (self.mapped[r + 1][c - 1] == color):
             SW += 1
             r += 1; c -= 1
-            #print("SW")
+            print("SW")
 
         # W
         r = row; c = col;
-        if (c > 0) and (self.mapped[r][c - 1] == color):
+        while (c > 0) and (self.mapped[r][c - 1] == color):
             W += 1
             c -= 1
-            #print ("W")
+            print ("W")
 
         # NW
         r = row; c = col;
-        if (c > 0 and r > 0) and (self.mapped[r - 1][c - 1] == color):
+        while (c > 0 and r > 0) and (self.mapped[r - 1][c - 1] == color):
             NW += 1
             r -= 1; c -= 1;
-            #print("NW")
+            print("NW")
 
-        if S + 1 >= 4:
-            print("WINNER")
-        elif W + 1 + E >= 4:
-            print("WINNER")
-        elif NE + 1 + SW >= 4:
-            print("WINNER")
-        elif NW + 1 + SE >= 4:
-            print("WINNER")
+        if (S + 1 >= 4) or (W + 1 + E >= 4) or (NE + 1 + SW >= 4) or (NW + 1 + SE >= 4):
+            print("winner")
+            self.display_winner(color)
+
+    def draw(self):
+        self.canvas.delete("all")
+        self.canvas.configure(bg="seashell3")
+        self.canvas.create_text(490 / 2, 490 / 3, text = "DRAW", font = "Herculanum 60 bold")
+        print("Draw")
 
     def on_click(self, event):
         # For now increment counter. We are assuming clicking is means you played your turn
         self.numTurns += 1
+        if self.numTurns >= 49:
+            self.draw()
+
         index = self.get_column(event.x)
 
         # Only do something if there are empty slots in given column
@@ -145,8 +158,8 @@ class ConnectFour(tk.Tk):
                 self.mapped[row][col] = "y" if color == "yellow" else "r"
                 self.canvas.itemconfig(item, fill = color)
             self.filledCircles[index] -= 1
-            #if self.numTurns >= 7:
-            self.check_sequence(col, row, -1, 0)
+            if self.numTurns >= 7:
+                self.check_sequence(col, row)
 
         #self.clicked = True
         print(numpy.matrix(self.mapped))
