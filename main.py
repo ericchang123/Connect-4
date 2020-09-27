@@ -69,7 +69,11 @@ class ConnectFour(tk.Tk):
 
     def display_winner(self, color):
         self.canvas.delete("all")
-        self.canvas.create_text(490 / 2, 490 / 2, text = "test", font = "Herculanum 60 bold")
+        self.canvas.configure(bg="seashell3")
+        color = "yellow" if color == "y" else "red"
+        textColor = "yellow2" if color == "yellow" else "red"
+        self.canvas.create_text(490 / 2, 490 / 3, text = color + " wins!", font = "Herculanum 60 bold", fill = textColor)
+        self.canvas.create_text(490 / 2, 490 / 1.5, text = "test")
 
     def check_sequence(self, col, row):
         color = self.mapped[row][col]
@@ -80,21 +84,17 @@ class ConnectFour(tk.Tk):
         r = row; c = col;
         while (c < 6 and r > 0) and (self.mapped[r - 1][c + 1] == color):
             NE += 1
-            #print("NE: {}".format(NE))
             r -= 1; c += 1;
-            print("NE")
 
         # E
         r = row; c = col;
         while (c < 6) and (self.mapped[r][c + 1] == color):
             E += 1
             c += 1
-            print("E")
 
         # SE
         r = row; c = col;
         while (r < 6 and c < 6) and (self.mapped[r + 1][c + 1] == color):
-            print("SE")
             SE += 1
             r += 1; c += 1;
 
@@ -103,31 +103,30 @@ class ConnectFour(tk.Tk):
         while (r < 6) and (self.mapped[r + 1][c] == color):
             S += 1
             r += 1
-            print("S")
 
         # SW
         r = row; c = col;
         while (c > 0 and r < 6) and (self.mapped[r + 1][c - 1] == color):
             SW += 1
             r += 1; c -= 1
-            print("SW")
 
         # W
         r = row; c = col;
         while (c > 0) and (self.mapped[r][c - 1] == color):
             W += 1
             c -= 1
-            print ("W")
 
         # NW
         r = row; c = col;
         while (c > 0 and r > 0) and (self.mapped[r - 1][c - 1] == color):
             NW += 1
             r -= 1; c -= 1;
-            print("NW")
 
         if (S + 1 >= 4) or (W + 1 + E >= 4) or (NE + 1 + SW >= 4) or (NW + 1 + SE >= 4):
-            print("winner")
+            if color == "y":
+                self.numWinsYellow += 1
+            else:
+                self.numWinsRed += 1
             self.display_winner(color)
 
     def draw(self):
@@ -153,16 +152,16 @@ class ConnectFour(tk.Tk):
             print("Clicked col: {}, row: {}".format(col, row))
             item = self.canvas.find_closest(centerX, centerY)
             if "oval" in self.canvas.itemcget(item, "tags"):
-                color = "yellow" if self.startingColor else "red"
+                color = "yellow2" if self.startingColor else "red"
                 self.startingColor = 1 - self.startingColor
-                self.mapped[row][col] = "y" if color == "yellow" else "r"
+                self.mapped[row][col] = "y" if color == "yellow2" else "r"
                 self.canvas.itemconfig(item, fill = color)
             self.filledCircles[index] -= 1
             if self.numTurns >= 7:
                 self.check_sequence(col, row)
 
         #self.clicked = True
-        print(numpy.matrix(self.mapped))
+        #print(numpy.matrix(self.mapped))
 
 
 if __name__ == "__main__":
