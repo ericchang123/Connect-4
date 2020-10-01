@@ -10,7 +10,6 @@ class ConnectFour(tk.Tk):
 
         self.cellwidth = 70
         self.cellheight = 70
-        #self.clicked = False
         self.columnRanges = [(0, 70), (70, 140), (140, 210), (210, 280), (280, 350), (350, 420), (420, 490)]
         self.filledCircles = None
 
@@ -24,7 +23,6 @@ class ConnectFour(tk.Tk):
         self.rect = {}
         self.oval = {}
 
-        #self.bind("<Motion>", self.on_hover)
         self.bind("<Button-1>", self.on_click)
 
         self.initialize_board()
@@ -50,33 +48,11 @@ class ConnectFour(tk.Tk):
             i += 1
         return i
 
-    def on_hover(self, event):
-        pass
-        #print("Hovering: {},{}".format(event.x, event.y))
-        """
-        x = event.x
-        index = self.get_column(x)
-        if self.filledCircles[index] > -1:
-            centerX = index * self.cellwidth + 35
-            centerY = self.filledCircles[index] * self.cellheight + 35
-            item = self.canvas.find_closest(centerX, centerY)
-            if "oval" in self.canvas.itemcget(item, "tags") and index != previousCol[0]:
-                if previousCol[0] != -1:
-                    prevX = previousCol[0] * self.cellwidth + 35
-                    prevY = self.filledCircles[previousCol[0]] * self.cellheight + 35
-                    prevItem = self.canvas.find_closest(prevX, prevY)
-                    self.canvas.itemconfig(prevItem, fill = "seashell3")
-                color = "yellow" if self.startingColor else "red"
-                self.canvas.itemconfig(item, fill = color)
-            self.filledCircles[index] -= 1
-            """
-
     def display_winner(self, color):
         self.gameFinished = True
         self.canvas.delete("all")
         self.canvas.configure(bg="seashell3")
         color = "yellow" if color == "y" else "red"
-        #textColor = "yellow2" if color == "yellow" else "red"
         self.canvas.create_text(245, 163, text = color + " wins!", font = "Herculanum 60 bold")
         self.canvas.create_text(245, 200, text = "Score", font = "Herculanum 30 bold")
         self.canvas.create_text(245, 230, text = "Red: " + str(self.numWinsRed), font = "Herculanum 30 bold")
@@ -140,7 +116,10 @@ class ConnectFour(tk.Tk):
         self.gameFinished = True
         self.canvas.delete("all")
         self.canvas.configure(bg="seashell3")
-        self.canvas.create_text(490 / 2, 490 / 3, text = "DRAW", font = "Herculanum 60 bold")
+        self.canvas.create_text(245, 163, text = "DRAW", font = "Herculanum 60 bold")
+        self.canvas.create_text(245, 200, text = "Score", font = "Herculanum 30 bold")
+        self.canvas.create_text(245, 230, text = "Red: " + str(self.numWinsRed), font = "Herculanum 30 bold")
+        self.canvas.create_text(245, 260, text = "Yellow: " + str(self.numWinsYellow), font = "Herculanum 30 bold")
         print("Draw")
 
     def on_click(self, event):
@@ -150,18 +129,11 @@ class ConnectFour(tk.Tk):
             self.initialize_board()
 
         else:
-            # For now increment counter. We are assuming clicking is means you played your turn
-
-
             index = self.get_column(event.x)
-
-            # Only do something if there are empty slots in given column
             if self.filledCircles[index] > -1:
-
                 self.numTurns += 1
                 if self.numTurns >= 49:
                     self.draw()
-
                 col = index
                 row = self.filledCircles[index]
                 centerX = col * self.cellwidth + 35
@@ -177,10 +149,6 @@ class ConnectFour(tk.Tk):
                 print(numpy.matrix(self.mapped))
                 if self.numTurns >= 7:
                     self.check_sequence(col, row)
-
-            #self.clicked = True
-
-
 
 if __name__ == "__main__":
     game = ConnectFour()
